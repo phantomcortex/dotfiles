@@ -51,11 +51,6 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-#experimental
-zmodload zsh/complist
-autoload -U compinit && compinit
-autoload -U colors && colors
-
 # FROM: https://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
 zmodload -a colors
 
@@ -63,11 +58,56 @@ zstyle ':completion:*' menu select
 #zstyle ':completion:*' 
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} ma=0\;33
 
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompcache"
 
 # From: https://unix.stackexchange.com/questions/214657/what-does-zstyle-do
 zstyle ':completion:*:descriptions' format "$fg[yellow]%B--- %d%b"
 zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format "$fg[red]No matches for:$reset_color %d"
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*:matches' group 'yes'
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:options' auto-description '%d'
+zstyle ':completion:*:corrections' format ' %F{green}-- %d (errors: %e) --%f'
+zstyle ':completion:*:descriptions' format ' %F{cyan}-- %d --%f'
+# Use caching to make completion for commands such as dpkg and apt usable.
+
+
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' verbose yes
+
+# Fuzzy match mistyped completions.
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*:match:*' original only
+
+# Directories
+zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+zstyle ':completion:*' squeeze-slashes true
+
+# Kill
+zstyle ':completion:*:*:*:*:processes' command 'ps -u $LOGNAME -o pid,user,command -w'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;36=0=01'
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:*:kill:*' force-list always
+zstyle ':completion:*:*:kill:*' insert-ids single
+
+# SSH/SCP/RSYNC
+zstyle ':completion:*:(ssh|scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
+
+#experimental
+zmodload zsh/complist
+autoload -Uz compinit && compinit
+autoload -U colors && colors
+
+
 #zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 
 setopt autocd 
@@ -83,13 +123,35 @@ setopt extendedglob
 #From BreadOnPenguins
 setopt globdots
 setopt append_history inc_append_history share_history
-setopt auto_menu menu_complete
+setopt auto_menu menu_complete auto_list
 
 #bat config
 export BAT_THEME="Monokai Extended Origin"
 export PATH=$PATH:~/.cargo/bin
 export PATH="$HOME/.local/bin:$PATH"
 
+#from bluefin zsh:
+
+# load brew autocomplete
+if [ -d "/home/linuxbrew/.linuxbrew/share/zsh/site-functions" ]; then
+    fpath+=(/home/linuxbrew/.linuxbrew/share/zsh/site-functions)
+fi
+
+# Standard style used by default for 'list-colors'
+LS_COLORS=${LS_COLORS:-'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'}
+
+
+# Brew 
+if [[ -o interactive ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  if type brew &>/dev/null; then
+    if [[ -w /home/linuxbrew/.linuxbrew ]]; then
+      if [[ ! -L "$(brew --prefix)/share/zsh/site-functions/_brew" ]]; then
+        brew completions link
+      fi
+    fi
+  fi
+fi
 
 #custom rm command from anthrophic's claude Sonnet 4:
 rm() {
