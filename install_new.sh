@@ -51,6 +51,9 @@ else
     #my script
     #oh-my-zsh >>>>
     ZSH=~/.dotfiles/.oh-my-zsh
+    KEEP_ZSHRC='yes'
+    CHSH='no' 
+    RUNZSH='no'
     # This var should only exist in terminal session if this script is run \
     # A new session should have this var
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
