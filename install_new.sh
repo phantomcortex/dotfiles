@@ -51,12 +51,13 @@ else
     #my script
     #oh-my-zsh >>>>
     ZSH=~/.dotfiles/.oh-my-zsh
+    #none of these seems to work...I must be doing something wrong
     KEEP_ZSHRC=yes
     CHSH=no 
     RUNZSH=no
     # This var should only exist in terminal session if this script is run \
     # A new session should have this var
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     #omz should install without issue
     #p10k >>>>
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
