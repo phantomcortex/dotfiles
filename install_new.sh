@@ -51,12 +51,12 @@ else
     #my script
     #oh-my-zsh >>>>
     ZSH=~/.dotfiles/.oh-my-zsh
-    KEEP_ZSHRC='yes'
-    CHSH='no' 
-    RUNZSH='no'
+    KEEP_ZSHRC=yes
+    CHSH=no 
+    RUNZSH=no
     # This var should only exist in terminal session if this script is run \
     # A new session should have this var
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     #omz should install without issue
     #p10k >>>>
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
