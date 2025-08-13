@@ -39,12 +39,14 @@ else
       echo "DEBUG:.zshrc is already symlinked"
       #Don't need to do anything because .zshrc probably isn't going to be linked to anything else
     else
+    : '
       read -p "1:remove .zshrc or 2:move to .zshrc_bak (1/2)" 12
     case $yn in 
       [1]* ) rm -rf ~/.zshrc; echo "~/.zshrc removed.\nsymlink back .zshrc in .dotfiles"; ln -s ~/.dotfiles/.zshrc ~/.zshrc;;
       [2]* ) mv ~/.zshrc ~/.zshrc_bak;echo "DEBUG: mv ~/.zshrc ~/.zshrc_bak";;
       * ) echo "need a number...exiting >>>>";exit;;#TODO: ADD RETRY
     esac
+    '
     fi
     #my script
     #oh-my-zsh >>>>
