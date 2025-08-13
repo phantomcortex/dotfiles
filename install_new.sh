@@ -28,12 +28,12 @@ if [[ -d ~/.dotfiles ]]; then
       [Nn]* ) echo "";;
       * ) exit;;
     esac
+    #omz adds the date to existing zshrc_bak
+    #should I do something like that?
   else
     mv ~/.dotfiles ~/.dotfiles_bak
   fi
 else
-    #curl
-    #sh -c "$(curl -fsSL https://raw.githubusercontent.com/phantomcortex/dotfiles/main/install_new.sh)"
     git clone https://github.com/phantomcortex/dotfiles.git ~/.dotfiles #future proof     
     if [[ -L "~/.zshrc" ]]; then
       echo "DEBUG:.zshrc is already symlinked"
@@ -43,16 +43,20 @@ else
     case $yn in 
       [1]* ) rm -rf ~/.zshrc; echo "~/.zshrc removed.\nsymlink back .zshrc in .dotfiles"; ln -s ~/.dotfiles/.zshrc ~/.zshrc;;
       [2]* ) mv ~/.zshrc ~/.zshrc_bak;echo "DEBUG: mv ~/.zshrc ~/.zshrc_bak";;
-      * ) echo "need a number...exiting >>>>";exit;;
+      * ) echo "need a number...exiting >>>>";exit;;#TODO: ADD RETRY
     esac
     fi
     #my script
-    #oh-my-zsh
+    #oh-my-zsh >>>>
     ZSH=~/.dotfiles/.oh-my-zsh
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" 
-    #p10k
-    #zsh-syntax
-    #autosuggestions
+    # This var should only exist in terminal session if this script is run \
+    # A new session should have this var
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    #omz should install without issue
+    #p10k >>>>
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+    #echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc 
+    #might not need this if I already have a preconfigured zshrc
 
   
 fi
