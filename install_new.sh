@@ -57,6 +57,17 @@ else
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
     #echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc 
     #might not need this if I already have a preconfigured zshrc
+    #safety check
+    if [ ! -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && [ ! -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    echo -e "\033[34m...zsh-syntax-highlighting is not installed\033[0m"
+    brew install zsh-syntax-highlighting 
+    fi
+
+    if [ ! -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && [ ! -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    echo -e "\033[34m...zsh-autosuggestions is not installed\033[0m"
+    brew install zsh-autosuggestions 
+    fi
+
 
   
 fi
