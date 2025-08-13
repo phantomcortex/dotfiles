@@ -44,7 +44,9 @@ if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 else 
   #might add auto-install later
+  #probably won't need since it should layered now.
 fi
+
 
 #ALIAS
 alias grep="grep --color=auto"
