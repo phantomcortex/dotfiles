@@ -16,7 +16,6 @@ P10K_THEME_DIR="$OH_MY_ZSH_DIR/custom/themes/powerlevel10k"
 # run this script Directly from web 
 # either clone or setup manually
 # 1.OMZ 2. mv to dotfiles 3. p10k clone to OMZ custom 
-# 4. zsh-syntax & autosuggestions to custom/plugins
 
 if [[ -d ~/.dotfiles ]]; then
   echo ".dotfiles already exists..."
@@ -37,8 +36,10 @@ else
     git clone https://github.com/phantomcortex/dotfiles.git ~/.dotfiles #future proof     
     if [[ -L "~/.zshrc" ]]; then
       echo "DEBUG:.zshrc is already symlinked"
+      sudo chattr +i ~/.zshrc #this might break oh-my-zsh's install script
       #Don't need to do anything because .zshrc probably isn't going to be linked to anything else
     else
+      mv .zshrc .zshrc_bak_$(date "+%Y-%m-%d-%h-%m")
     : '
       read -p "1:remove .zshrc or 2:move to .zshrc_bak (1/2)" 12
     case $yn in 
@@ -57,7 +58,14 @@ else
     RUNZSH=no
     # This var should only exist in terminal session if this script is run \
     # A new session should have this var
+    if 
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    #omz will always overwrite any existing .zshrc in $HOME and it's mildly infuriating...
+    #Actually no, it's extremely infuriating
+    rm -f ~/.zshrc 
+    rm -f ~/.zshrc.pre-oh-my-zsh
+    ln -s ~/.dotfiles/.zshrc ~/.zshrc
+    sudo chattr +i ~/.zshrc  
     #omz should install without issue
     #p10k >>>>
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
