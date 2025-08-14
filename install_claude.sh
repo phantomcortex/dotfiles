@@ -189,7 +189,7 @@ install_powerlevel10k_theme() {
     # Create themes directory if it doesn't exist
     mkdir -p "$(dirname "$P10K_THEME_DIR")"
     
-    if git clone --depth=1 --quiet https://github.com/romkatv/powerlevel10k.git "$P10K_THEME_DIR"; then
+    if git clone --depth=1 --quiet https://github.com/phantomcortex/powerlevel10k.git "$P10K_THEME_DIR"; then
         log_success "Powerlevel10k theme installed successfully"
     else
         log_error "Failed to install Powerlevel10k theme"
@@ -203,6 +203,27 @@ install_powerlevel10k_theme() {
         log_error "Powerlevel10k theme installation appears incomplete"
         exit 1
     fi
+}
+
+check_p10k_preconfigure() {
+  log_info "checking OS for preconfigured P10k theme"
+
+  unameOut="$(uname -s)"
+  case "${unameOut}" in
+    Linux*)     machine="Linux";;
+    Darwin*)    machine="Mac";;
+    *)          machine="UNKNOWN:${unameOut}"
+  esac
+  echo ${machine}
+
+  if [ "$machine" == "Mac" ]; then
+      # Code for macOS platform
+      [ -e ~/.dotfiles/p10k-macos.zsh] || ln -s ~/.dotfiles/p10k-macos.zsh ~/.p10k.zsh
+  elif [ "$machine" == "Linux" ]; then
+      # Code for Linux platform
+      [ -e ~/.dotfiles/p10k-fedora.zsh] || ln -s ~/.dotfiles/p10k-fedora.zsh ~/.p10k.zsh
+
+  fi   
 }
 
 check_and_install_zsh_plugins() {
@@ -297,6 +318,9 @@ main() {
     
     # Install Powerlevel10k theme
     install_powerlevel10k_theme
+
+    # Install powerlevel10k preconfigured .p10k.zsh
+    check_p10k_preconfigure
     
     # Check and install Zsh plugins
     check_and_install_zsh_plugins
