@@ -49,10 +49,9 @@ ask_user_confirmation() {
     # In unattended mode, use default response
     if [[ "$UNATTENDED_MODE" == "true" ]]; then
         log_info "$prompt (auto-answering: $default_response)"
-        case "${default_response,,}" in
-            y|yes) return 0 ;;
-            n|no) return 1 ;;
-        esac
+        [ "$default_response" == "y" ] || return 0 
+        [ "$default_response" == "n" ] || return 1
+    else
     fi
     
     # Interactive mode (fallback)
