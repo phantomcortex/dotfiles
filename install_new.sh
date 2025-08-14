@@ -12,7 +12,7 @@ DOTFILES_DIR="$HOME/.dotfiles"
 OH_MY_ZSH_DIR="$DOTFILES_DIR/.oh-my-zsh"
 P10K_THEME_DIR="$OH_MY_ZSH_DIR/custom/themes/powerlevel10k"
 ZSH=~/.dotfiles/.oh-my-zsh
-
+echo "zsh:$ZSH"
 
 if [[ -d ~/.dotfiles ]]; then
   echo ".dotfiles already exists..."
