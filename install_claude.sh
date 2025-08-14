@@ -51,7 +51,6 @@ ask_user_confirmation() {
         log_info "$prompt (auto-answering: $default_response)"
         [ "$default_response" == "y" ] || return 0 
         [ "$default_response" == "n" ] || return 1
-    else
     fi
     
     # Interactive mode (fallback)
