@@ -40,10 +40,11 @@ if [[ -d ~/.dotfiles ]]; then
 else
     #would it easier it was just git cloned? 
     #AUTHOR NOTE: No idea what all these git commands do, but it was in omz install script
-    unset -u
-    ZSH_REPO=${REPO:-ohmyzsh/ohmyzsh}
-    ZSH_REMOTE=${REMOTE:-https://github.com/${REPO}.git}
-    ZSH_BRANCH=${BRANCH:-master}
+    
+    
+    REPO=${REPO:-ohmyzsh/ohmyzsh}
+    REMOTE=${REMOTE:-https://github.com/${REPO}.git}
+    BRANCH=${BRANCH:-master}
     umask g-w,o-w
     
     # Manual clone with git config options to support git < v1.7.2
@@ -65,6 +66,7 @@ else
       echo  -e "${RED}git clone of oh-my-zsh repo failed${NC}"
       exit 1
     }
+    
     [ -e ~/.dotfiles/.oh-my-zsh/oh-my-zsh.zsh ] || echo -e "${BLUE}oh-my-zsh is installed!${NC}"
     #p10k >>>>
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
