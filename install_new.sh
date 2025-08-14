@@ -40,6 +40,7 @@ if [[ -d ~/.dotfiles ]]; then
 else
     #would it easier it was just git cloned? 
     #AUTHOR NOTE: No idea what all these git commands do, but it was in omz install script
+    unset -u
     ZSH_REPO=${REPO:-ohmyzsh/ohmyzsh}
     ZSH_REMOTE=${REMOTE:-https://github.com/${REPO}.git}
     ZSH_BRANCH=${BRANCH:-master}
