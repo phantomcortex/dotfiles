@@ -39,17 +39,12 @@ if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else 
-  #might add auto-install later
 fi
 
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 
 elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
   source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-else 
-  #might add auto-install later
-  #probably won't need since it should layered now.
 fi
 
 
@@ -68,7 +63,7 @@ alias ..="cd .."
 source $ZSH/oh-my-zsh.sh
 [[ -f ~/.p10k.zsh ]] && [[! -f ~/.dotfiles/.p10k.zsh]] || mv ~/.p10k.zsh ~/.dotfiles/.p10k.zsh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/.dotfiles/.p10k.zsh
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
 # FROM: https://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
