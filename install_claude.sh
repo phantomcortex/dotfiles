@@ -208,6 +208,7 @@ install_powerlevel10k_theme() {
 check_p10k_preconfigure() {
   log_info "checking OS for preconfigured P10k theme"
 
+  #check platform
   unameOut="$(uname -s)"
   case "${unameOut}" in
     Linux*)     machine="Linux";;
@@ -216,13 +217,13 @@ check_p10k_preconfigure() {
   esac
   echo ${machine}
 
+  # use different theme depending platform
   if [ "$machine" == "Mac" ]; then
       # Code for macOS platform
       [ -e ~/.dotfiles/p10k-macos.zsh] || ln -s ~/.dotfiles/p10k-macos.zsh ~/.p10k.zsh
   elif [ "$machine" == "Linux" ]; then
       # Code for Linux platform
-      [ -e ~/.dotfiles/p10k-fedora.zsh] || ln -s ~/.dotfiles/p10k-fedora.zsh ~/.p10k.zsh
-
+      [ -e ~/.dotfiles/p10k-fedoralinux.zsh] || ln -s ~/.dotfiles/p10k-fedora.zsh ~/.p10k.zsh
   fi   
 }
 
