@@ -11,11 +11,8 @@ NC='\033[0m'
 DOTFILES_DIR="$HOME/.dotfiles"
 OH_MY_ZSH_DIR="$DOTFILES_DIR/.oh-my-zsh"
 P10K_THEME_DIR="$OH_MY_ZSH_DIR/custom/themes/powerlevel10k"
+ZSH=~/.dotfiles/.oh-my-zsh
 
-# PLAN: 
-# run this script Directly from web 
-# either clone or setup manually
-# 1.OMZ 2. mv to dotfiles 3. p10k clone to OMZ custom 
 
 if [[ -d ~/.dotfiles ]]; then
   echo ".dotfiles already exists..."
@@ -31,54 +28,56 @@ if [[ -d ~/.dotfiles ]]; then
     #should I do something like that?
   else
     mv ~/.dotfiles ~/.dotfiles_bak
-  fi
-else
     git clone https://github.com/phantomcortex/dotfiles.git ~/.dotfiles #future proof     
     if [[ -L "~/.zshrc" ]]; then
-      echo "DEBUG:.zshrc is already symlinked"
-      sudo chattr +i ~/.zshrc #this might break oh-my-zsh's install script
-      #Don't need to do anything because .zshrc probably isn't going to be linked to anything else
+      echo "${RED}DEBUG${NC}:.zshrc is already symlinked"
+      sudo chattr +i ~/.zshrc 
+      #.zshrc probably isn't going to be linked to anything else
     else
       mv .zshrc .zshrc_bak_$(date "+%Y-%m-%d-%h-%m")
-    : '
-      read -p "1:remove .zshrc or 2:move to .zshrc_bak (1/2)" 12
-    case $yn in 
-      [1]* ) rm -rf ~/.zshrc; echo "~/.zshrc removed.\nsymlink back .zshrc in .dotfiles"; ln -s ~/.dotfiles/.zshrc ~/.zshrc;;
-      [2]* ) mv ~/.zshrc ~/.zshrc_bak;echo "DEBUG: mv ~/.zshrc ~/.zshrc_bak";;
-      * ) echo "need a number...exiting >>>>";exit;;#TODO: ADD RETRY
-    esac
-    '
     fi
-    #my script
-    #oh-my-zsh >>>>
-    ZSH=~/.dotfiles/.oh-my-zsh
-    #none of these seems to work...I must be doing something wrong
-    KEEP_ZSHRC=yes
-    CHSH=no 
-    RUNZSH=no
-    # This var should only exist in terminal session if this script is run \
-    # A new session should have this var
-    if 
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    #omz will always overwrite any existing .zshrc in $HOME and it's mildly infuriating...
-    #Actually no, it's extremely infuriating
-    rm -f ~/.zshrc 
-    rm -f ~/.zshrc.pre-oh-my-zsh
-    ln -s ~/.dotfiles/.zshrc ~/.zshrc
-    sudo chattr +i ~/.zshrc  
-    #omz should install without issue
+  fi
+else
+    #would it easier it was just git cloned? 
+    #AUTHOR NOTE: No idea what all these git commands do, but it was in omz install script
+    ZSH_REPO=${REPO:-ohmyzsh/ohmyzsh}
+    ZSH_REMOTE=${REMOTE:-https://github.com/${REPO}.git}
+    ZSH_BRANCH=${BRANCH:-master}
+    umask g-w,o-w
+    
+    # Manual clone with git config options to support git < v1.7.2
+    git init --quiet "$ZSH" && cd "$ZSH" \
+    && git config core.eol lf \
+    && git config core.autocrlf false \
+    && git config fsck.zeroPaddedFilemode ignore \
+    && git config fetch.fsck.zeroPaddedFilemode ignore \
+    && git config receive.fsck.zeroPaddedFilemode ignore \
+    && git config oh-my-zsh.remote origin \
+    && git config oh-my-zsh.branch "$BRANCH" \
+    && git remote add origin "$REMOTE" \
+    && git fetch --depth=1 origin \
+    && git checkout -b "$BRANCH" "origin/$BRANCH" || {
+      [ ! -d "$ZSH" ] || {
+        cd -
+        rm -rf "$ZSH" 2>/dev/null
+      }
+      echo  -e "${RED}git clone of oh-my-zsh repo failed${NC}"
+      exit 1
+    }
+    [ -e ~/.dotfiles/.oh-my-zsh/oh-my-zsh.zsh ] || echo -e "${BLUE}oh-my-zsh is installed!${NC}"
     #p10k >>>>
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+    [ -e ~/.dotfiles/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme]
     #echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc 
     #might not need this if I already have a preconfigured zshrc
     #safety check
     if [ ! -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && [ ! -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    echo -e "\033[34m...zsh-syntax-highlighting is not installed\033[0m"
+    echo -e "$RED...zsh-syntax-highlighting is not installed$NC"
     brew install zsh-syntax-highlighting 
     fi
 
     if [ ! -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] && [ ! -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    echo -e "\033[34m...zsh-autosuggestions is not installed\033[0m"
+    echo -e "$RED...zsh-autosuggestions is not installed$NC"
     brew install zsh-autosuggestions 
     fi
 
