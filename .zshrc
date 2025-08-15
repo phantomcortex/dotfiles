@@ -34,19 +34,6 @@ COMPLETION_WAITING_DOTS="true"
 # I think oh-my-zsh plugins:
 plugins=(aliases alias-finder dnf copyfile copypath fzf dnf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
 
-# part sanity check, part function check
-if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
-if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 
-elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
-
 
 #ALIAS
 alias grep="grep --color=auto"
@@ -61,7 +48,19 @@ alias ..="cd .."
 
 
 source $ZSH/oh-my-zsh.sh
-[[ -f ~/.p10k.zsh ]] && [[! -f ~/.dotfiles/.p10k.zsh]] || mv ~/.p10k.zsh ~/.dotfiles/.p10k.zsh
+# part sanity check, part function check
+if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 
+elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -246,7 +245,7 @@ cd() {
 
 # Enhanced nautilus launcher with error handling
 naut() {
-    local target_dir="${1:-.}"
+        local target_dir="${1:-.}"
     
     if [[ ! -d "$target_dir" ]]; then
         echo "Directory '$target_dir' does not exist."
@@ -257,3 +256,5 @@ naut() {
     disown
     echo "Nautilus opened for: $(realpath "$target_dir")"
 }
+[[ "($uname -s)" == "Darwin" ]] || unalias naut
+
