@@ -31,8 +31,45 @@ ENABLE_CORRECTION="true"
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 COMPLETION_WAITING_DOTS="true"
-# I think oh-my-zsh plugins:
-plugins=(aliases alias-finder dnf copyfile copypath fzf dnf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
+# oh-my-zsh plugins (depending on platform):
+unameOut="$(uname -s)"
+  case "${unameOut}" in
+    Linux*)     machine="Linux";;
+    Darwin*)    machine="Mac";;
+  esac
+
+  # use different theme depending platform
+  if [ "$machine" == "Mac" ]; then
+      # Code for macOS platform
+      plugins=(aliases alias-finder copyfile copypath fzf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
+
+  elif [ "$machine" == "Linux" ]; then
+      # Code for Linux platform
+      plugins=(aliases alias-finder dnf copyfile copypath fzf dnf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
+  fi 
+
+
+source $ZSH/oh-my-zsh.sh
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# part sanity check, part function check
+if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # system level package
+elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh #linuxbrew
+elif [ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # Apple Silicon homebrew
+fi
+
+if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh # system level package
+elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh #linuxbrew
+elif [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh # Apple Silicon homebrew
+
+fi
 
 
 #ALIAS
@@ -45,24 +82,6 @@ alias ltm="tree -uhp --filelimit 20 --sort=size -L 3"
 alias cp="advcp -g"
 alias mv="advmv -g"
 alias ..="cd .."
-
-
-source $ZSH/oh-my-zsh.sh
-# part sanity check, part function check
-if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-  source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
-if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh 
-elif [ -f /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-  source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 
 # FROM: https://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
@@ -128,6 +147,7 @@ zstyle ':completion:*:*:mpg321:*' file-patterns '*.(mp3|MP3):mp3\ files *(-/):di
 zstyle ':completion:*:*:ogg123:*' file-patterns '*.(ogg|OGG|flac):ogg\ files *(-/):directories'
 zstyle ':completion:*:*:mocp:*' file-patterns '*.(wav|WAV|mp3|MP3|ogg|OGG|flac):ogg\ files *(-/):directories'
 # NOTE:No idea what this does but I assume it's useful.
+# most of the above is from bluefin
 
 #experimental
 zmodload zsh/complist
@@ -162,7 +182,10 @@ export PATH="$HOME/.local/bin:$PATH"
 # load brew autocomplete
 if [ -d "/home/linuxbrew/.linuxbrew/share/zsh/site-functions" ]; then
     fpath+=(/home/linuxbrew/.linuxbrew/share/zsh/site-functions)
+elif [ -d "/opt/homebrew/share/zsh/site-functions" ]; then
+    fpath+=(/opt/homebrew/share/zsh/site-functions)
 fi
+
 
 # Standard style used by default for 'list-colors'
 LS_COLORS=${LS_COLORS:-'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40;07:sg=36;40;07:tw=32;40;07:ow=33;40;07:'}
@@ -184,7 +207,9 @@ fi
 rm() {
     if [[ -d "$1" ]]; then
         local file_count=$(find "$1" -type f | wc -l)
-        echo "This is a directory containing $file_count files."
+        local CYAN="\033[031m"
+        local NC="\033[0m"
+        echo -e "This is a directory containing $CYAN$file_count$NC files."
         echo -n "Are you quite certain you wish to delete it? [y/N] "
         read -q "REPLY?"
         echo
@@ -245,7 +270,7 @@ cd() {
 
 # Enhanced nautilus launcher with error handling
 naut() {
-        local target_dir="${1:-.}"
+    local target_dir="${1:-.}"
     
     if [[ ! -d "$target_dir" ]]; then
         echo "Directory '$target_dir' does not exist."
@@ -256,5 +281,3 @@ naut() {
     disown
     echo "Nautilus opened for: $(realpath "$target_dir")"
 }
-[[ "($uname -s)" == "Darwin" ]] || unalias naut
-
