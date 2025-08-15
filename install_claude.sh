@@ -220,10 +220,13 @@ check_p10k_preconfigure() {
   # use different theme depending platform
   if [ "$machine" == "Mac" ]; then
       # Code for macOS platform
-      [ -e ~/.dotfiles/p10k-macos.zsh ] || ln -s ~/.dotfiles/p10k-macos.zsh ~/.p10k.zsh
-  elif [ "$machine" == "Linux" ]; then
+      if [ -e ~/.dotfiles/p10k-macos.zsh ]; then 
+        [ ! -L ~/.p10k.zsh ] rm ~/.p10k.zsh ]; then ln -s ~/.dotfiles/p10k-macos.zsh ~/.p10k.zsh 
+      fi  elif [ "$machine" == "Linux" ]; then
       # Code for Linux platform
-      [ -e ~/.dotfiles/p10k-fedoralinux.zsh ] || ln -s ~/.dotfiles/p10k-fedora.zsh ~/.p10k.zsh
+      if [ -e ~/.dotfiles/p10k-fedoralinux.zsh ]; then 
+        [ ! -L ~/.p10k.zsh ] rm ~/.p10k.zsh ]; then ln -s ~/.dotfiles/p10k-fedoralinux.zsh ~/.p10k.zsh
+      fi
   fi   
 }
 
