@@ -32,22 +32,23 @@ ENABLE_CORRECTION="true"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 COMPLETION_WAITING_DOTS="true"
 # oh-my-zsh plugins (depending on platform):
-unameOut="$(uname -s)"
-  case "${unameOut}" in
-    Linux*)     machine="Linux";;
-    Darwin*)    machine="Mac";;
-  esac
 
-  # use different theme depending platform
-  if [ "$machine" == "Mac" ]; then
-      # Code for macOS platform
-      plugins=(aliases alias-finder copyfile copypath fzf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
-
-  elif [ "$machine" == "Linux" ]; then
-      # Code for Linux platform
-      plugins=(aliases alias-finder dnf copyfile copypath fzf dnf git gh rsync ssh sudo pip safe-paste systemadmin tldr zoxide z zsh-interactive-cd colored-man-pages)
-  fi 
-
+# See Plugins list: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
+case "$(uname -s)" in
+  Darwin)
+    plugins=(aliases alias-finder brew colored-man-pages copyfile copypath command-not-found fzf gh git git-auto-fetch macos lol pj safe-paste ssh sudo tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
+    zstyle :omz:plugins:iterm2 shell-integration yes
+    [ -f /opt/homebrew/bin/fzf ] && FZF_BASE=/opt/home/bin/fzf
+    ;;
+  Linux)
+    plugins=(aliases alias-finder brew colored-man-pages dnf fzf gh git git-auto-fetch lol pj procs rsync safe-paste sudo systemd tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
+    [ -f /usr/bin/fzf ] && FZF_BASE=/usr/bin/fzf
+    ;;
+  *)
+    plugins=(zsh-syntax-highlighting) # fallback
+    echo "ERROR: unknown OS"
+    ;;
+esac
 
 source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -82,7 +83,7 @@ alias ltm="tree -uhp --filelimit 20 --sort=size -L 3"
 alias cp="advcp -g"
 alias mv="advmv -g"
 alias ..="cd .."
-
+alias ls="ls -Fa"
 
 # FROM: https://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
 zmodload -a colors
@@ -149,6 +150,12 @@ zstyle ':completion:*:*:mocp:*' file-patterns '*.(wav|WAV|mp3|MP3|ogg|OGG|flac):
 # NOTE:No idea what this does but I assume it's useful.
 # most of the above is from bluefin
 
+#alias-finder
+zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
+zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
+zstyle ':omz:plugins:alias-finder' exact yes # disabled by default
+zstyle ':omz:plugins:alias-finder' cheaper yes # disabled by default
+
 #experimental
 zmodload zsh/complist
 autoload -Uz compinit && compinit
@@ -170,7 +177,11 @@ setopt extendedglob
 #From BreadOnPenguins
 setopt globdots
 setopt append_history inc_append_history share_history
-setopt auto_menu menu_complete auto_list
+setopt auto_menu auto_list
+
+# correction often corrected commands that would otherwise run perfectly fine and correct unrelated commands
+unsetopt correct_all
+unsetopt correct
 
 #bat config
 export BAT_THEME="Monokai Extended Origin"
