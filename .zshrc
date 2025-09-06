@@ -39,6 +39,7 @@ case "$(uname -s)" in
     plugins=(aliases alias-finder brew colored-man-pages copyfile copypath command-not-found fzf gh git git-auto-fetch macos lol pj safe-paste ssh sudo tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
     zstyle :omz:plugins:iterm2 shell-integration yes
     [ -f /opt/homebrew/bin/fzf ] && FZF_BASE=/opt/home/bin/fzf
+    export PATH="/opt/Homebrew/sbin:$PATH"
     ;;
   Linux)
     plugins=(aliases alias-finder brew colored-man-pages dnf fzf gh git git-auto-fetch lol pj procs rsync safe-paste sudo systemd tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
@@ -72,18 +73,6 @@ elif [ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; the
 
 fi
 
-
-#ALIAS
-alias grep="grep --color=auto"
-alias fgrep="fgrep --color=auto"
-alias egrep="egrep --color=auto"
-alias cat="bat -p"
-alias lt="tree -uh --sort=size -L 1"
-alias ltm="tree -uhp --filelimit 20 --sort=size -L 3"
-alias cp="advcp -g"
-alias mv="advmv -g"
-alias ..="cd .."
-alias ls="ls -Fa"
 
 # FROM: https://linuxshellaccount.blogspot.com/2008/12/color-completion-using-zsh-modules-on.html
 zmodload -a colors
@@ -292,3 +281,30 @@ naut() {
     disown
     echo "Nautilus opened for: $(realpath "$target_dir")"
 }
+
+
+#ALIAS 
+alias xiso="~/Documents/bin/extract-xiso/build/extract-xiso"
+alias testssl="~/Documents/bin/testssl.sh/"
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
+alias apltop="sudo asitop"
+alias coffee="caffeinate"
+alias python="python3"
+alias py="python3"
+#alias pip="pip3"
+alias vi="nvim"
+alias vim="nvim"
+alias brew-old="brew outdated"
+alias cd="z"
+alias lt="eza --tree --no-user --long --sort=size --level=1 --git"
+alias ltm="eza --tree --long --sort=size --level=3 --git"
+alias cat="bat -p"
+alias less="bat"
+unalias ls
+alias ls="eza --icons=always --classify=always --mounts"
+alias lf="eza --icons=always --classify=always --long --almost-all --sort=size --git"
+alias lfe="eza --icons=always --classify=always --long --almost-all --sort=size --git --total-size --show-symlinks"
+alias ip="ifconfig en0"
+alias sftp="with-readline sftp"
