@@ -36,14 +36,16 @@ COMPLETION_WAITING_DOTS="true"
 # See Plugins list: https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins
 case "$(uname -s)" in
   Darwin)
-    plugins=(aliases alias-finder brew colored-man-pages copyfile copypath command-not-found fzf gh git git-auto-fetch macos lol pj safe-paste ssh sudo tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
+    plugins=(aliases alias-finder brew colored-man-pages copyfile copypath command-not-found fzf gh git git-auto-fetch macos lol pj safe-paste ssh sudo tldr zoxide z zsh-interactive-cd)
     zstyle :omz:plugins:iterm2 shell-integration yes
     [ -f /opt/homebrew/bin/fzf ] && FZF_BASE=/opt/home/bin/fzf
     export PATH="/opt/Homebrew/sbin:$PATH"
+    MACHINE="darwin"
     ;;
   Linux)
-    plugins=(aliases alias-finder brew colored-man-pages dnf fzf gh git git-auto-fetch lol pj procs rsync safe-paste sudo systemd tldr zoxide z zsh-interactive-cd zsh-syntax-highlighting zsh-autosuggestions)
+    plugins=(aliases alias-finder brew colored-man-pages dnf fzf gh git git-auto-fetch lol pj procs rsync safe-paste sudo systemd tldr zoxide z zsh-interactive-cd)
     [ -f /usr/bin/fzf ] && FZF_BASE=/usr/bin/fzf
+    MACHINE="linux"
     ;;
   *)
     plugins=(zsh-syntax-highlighting) # fallback
@@ -222,7 +224,10 @@ rm() {
 }
 #
 mkcd() {
+    local CYAN="\033[036m"
+    local NC="\033[0m"
     mkdir -p "$1" && cd "$1"
+    echo -e "$CYAN$NC Entered: $CYAN$1$NC"
 }
 
 fcd() {
@@ -246,7 +251,7 @@ cd() {
         if [ $item_count -gt 20 ]; then
             echo "Directory contains $item_count items:"
             local col_width=$(($(tput cols) / 2 - 1))
-            ls -1 --color=always -F | head -40 | awk -v width="$col_width" '
+            eza --icons=always --classify=always --color=always| head -40 | awk -v width="$col_width" '
             {
                 # Remove ANSI codes for length check
                 plain = $0
@@ -263,7 +268,7 @@ cd() {
             END { if (NR % 2 == 1) print "" }'
             echo "... and $((item_count - 40)) more items (use 'ls' to see all)"
         else
-            ls --color=auto -F
+            eza --icons=always --classify=always --color=always
         fi
     }
 }
@@ -276,16 +281,16 @@ naut() {
         echo "Directory '$target_dir' does not exist."
         return 1
     fi
-    
+    local CYAN="\033[031m"
+    local NC="\033[0m"
     nautilus "$target_dir" >/dev/null 2>&1 &
     disown
-    echo "Nautilus opened for: $(realpath "$target_dir")"
+    echo "Nautilus opened for: $CYAN$(realpath "$target_dir")$NC"
 }
 
 
 #ALIAS 
-alias xiso="~/Documents/bin/extract-xiso/build/extract-xiso"
-alias testssl="~/Documents/bin/testssl.sh/"
+#alias xiso="~/Documents/bin/extract-xiso/build/extract-xiso"
 alias grep="grep --color=auto"
 alias fgrep="fgrep --color=auto"
 alias egrep="egrep --color=auto"
@@ -297,14 +302,16 @@ alias py="python3"
 alias vi="nvim"
 alias vim="nvim"
 alias brew-old="brew outdated"
-alias cd="z"
+#alias cd="z"
 alias lt="eza --tree --no-user --long --sort=size --level=1 --git"
 alias ltm="eza --tree --long --sort=size --level=3 --git"
 alias cat="bat -p"
 alias less="bat"
+unalias tldr 
 unalias ls
 alias ls="eza --icons=always --classify=always --mounts"
 alias lf="eza --icons=always --classify=always --long --almost-all --sort=size --git"
 alias lfe="eza --icons=always --classify=always --long --almost-all --sort=size --git --total-size --show-symlinks"
-alias ip="ifconfig en0"
+alias ip="ifconfig enp6s0f3u3 | grep inet | awk ' { print $1, $2}'"
 alias sftp="with-readline sftp"
+source ~/.dotfiles/lockdown_function.sh
