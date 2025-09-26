@@ -232,3 +232,4 @@ alias lfe="eza --icons=always --classify=always --long --almost-all --sort=size 
 alias ip="ifconfig enp6s0f3u3 | grep inet | awk ' { print $1, $2}'"
 alias sftp="with-readline sftp"
 source ~/.dotfiles/lockdown_function.sh
+source ~/.dotfiles/auxillary_functions.sh
